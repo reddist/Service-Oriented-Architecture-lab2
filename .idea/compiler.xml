@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="lab2jaxrs" />
+        <module name="Service-Oriented-Architecture-lab2-jaxrs-service" />
       </profile>
     </annotationProcessing>
   </component>
