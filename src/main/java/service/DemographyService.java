@@ -16,7 +16,7 @@ import java.util.Arrays;
 // management-https: 35999 - service1
 
 @ApplicationScoped
-public class CalculateService {
+public class DemographyService {
     Client client = ClientBuilder.newClient();
     String api = "http://localhost:8080/persons";
 
@@ -39,7 +39,7 @@ public class CalculateService {
         return (int)Math.floor(count * 100.00 / persons.length);
     }
 
-    public Integer calculateEyeColorAndNationalityPercentage(Color color, Country nationality) {
+    public Integer calculateEyeColorAndNationalityPercentage(Country nationality, Color color) {
         Person[] persons = getPersonsFromMainService();
         System.out.println("Received from main service: " + Arrays.toString(persons));
 
