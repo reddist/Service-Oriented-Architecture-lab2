@@ -1,10 +1,10 @@
 package service;
 
 import dto.*;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.core.MediaType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -16,14 +16,15 @@ import java.util.Arrays;
 
 @ApplicationScoped
 public class DemographyService {
-    Client client = ClientBuilder.newClient();
-    String api = "http://localhost:8080/persons";
+//    Client client = ClientBuilder.newClient();
+//    String api = "http://localhost:8080/persons";
 
     public Person[] getPersonsFromMainService() {
         return new Person[]{
                 new Person(1, "Alex", new Coordinates(1L, 2L), ZonedDateTime.now(), 180.0, "4021 856033", Color.BLUE, Country.VATICAN, new Location(1L, 2, 3)),
+                new Person(4, "Alex", new Coordinates(1L, 2L), ZonedDateTime.now(), 180.0, "4021 856033", Color.BLUE, Country.VATICAN, new Location(1L, 2, 3)),
                 new Person(2, "Fara", new Coordinates(2L, 3L), ZonedDateTime.now(), 177.0, "1122 293746", Color.BROWN, Country.JAPAN, new Location(10L, 105, 6)),
-                new Person(3, "Darina", new Coordinates(4L, 5L), ZonedDateTime.now(), 173.0, "2734 297477", Color.BLUE, Country.VATICAN, new Location(1L, 2, 2)),
+                new Person(3, "Darina", new Coordinates(4L, 5L), ZonedDateTime.now(), 173.0, "2734 297477", Color.BLUE, Country.JAPAN, new Location(1L, 2, 2)),
         };
 //        return client
 //                .target(api)

@@ -2,13 +2,15 @@ package controller;
 
 import dto.Color;
 import dto.Country;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.PathParam;
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.PathParam;
 
+import javax.enterprise.context.ApplicationScoped;
+
+import dto.Percentage;
 import service.DemographyService;
 
 @ApplicationScoped
@@ -33,7 +35,7 @@ public class DemographyResource {
         Color eyeColor = Color.valueOf(eyeColorString.toUpperCase());
         Integer percentage = demographyService.calculateEyeColorPercentage(eyeColor);
 
-        return Response.ok(percentage, MediaType.APPLICATION_XML).build();
+        return Response.ok(new Percentage(percentage)).build();
     }
 
     @GET
@@ -52,6 +54,6 @@ public class DemographyResource {
 
         Integer percentage = demographyService.calculateEyeColorAndNationalityPercentage(nationality, eyeColor);
 
-        return Response.ok(percentage, MediaType.APPLICATION_XML).build();
+        return Response.ok(new Percentage(percentage)).build();
     }
 }
