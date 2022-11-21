@@ -2,16 +2,19 @@ package controller;
 
 import dto.Color;
 import dto.Country;
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.PathParam;
-
-import javax.enterprise.context.ApplicationScoped;
-
+import dto.ErrorMessage;
 import dto.Percentage;
 import service.DemographyService;
+import service.NoPersonsException;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @ApplicationScoped
 @Path("/demography")
@@ -22,7 +25,7 @@ public class DemographyResource {
     @GET
     @Produces(MediaType.APPLICATION_XML)
     public Response getHelloCity() {
-        return Response.ok().entity("Hello jax-rs!").build();
+        return Response.ok().entity(new ErrorMessage("Hello jax-rs!")).build();
     }
 
     @GET
@@ -31,11 +34,19 @@ public class DemographyResource {
     public Response calculateEyeColorPercentage(@PathParam("eye-color") String eyeColorString) {
         System.out.println("calculateEyeColorPercentage method in controller");
 
-        // TODO add catching IllegalArgumentException
-        Color eyeColor = Color.valueOf(eyeColorString.toUpperCase());
-        Integer percentage = demographyService.calculateEyeColorPercentage(eyeColor);
+        Color eyeColor;
+        try {
+            eyeColor = Color.valueOf(eyeColorString.toUpperCase());
+        } catch (IllegalArgumentException error) {
+            return Response.serverError().entity(new ErrorMessage("Invalid Eye color")).build();
+        }
 
-        return Response.ok(new Percentage(percentage)).build();
+        try {
+            Integer percentage = demographyService.calculateEyeColorPercentage(eyeColor);
+            return Response.ok(new Percentage(percentage)).build();
+        } catch (NoPersonsException e) {
+            return Response.serverError().entity(new ErrorMessage("No persons in store")).build();
+        }
     }
 
     @GET
@@ -47,13 +58,25 @@ public class DemographyResource {
     ) {
         System.out.println("calculateEyeColorAndNationalityPercentage method in controller");
 
-        // TODO add catching IllegalArgumentException
-        Country nationality = Country.valueOf(nationalityString.toUpperCase());
-        // TODO add catching IllegalArgumentException
-        Color eyeColor = Color.valueOf(eyeColorString.toUpperCase());
+        Country nationality;
+        try {
+            nationality = Country.valueOf(nationalityString.toUpperCase());
+        } catch (IllegalArgumentException error) {
+            return Response.serverError().entity(new ErrorMessage("Invalid Nationality")).build();
+        }
 
-        Integer percentage = demographyService.calculateEyeColorAndNationalityPercentage(nationality, eyeColor);
+        Color eyeColor;
+        try {
+            eyeColor = Color.valueOf(eyeColorString.toUpperCase());
+        } catch (IllegalArgumentException error) {
+            return Response.serverError().entity(new ErrorMessage("Invalid Eye color")).build();
+        }
 
-        return Response.ok(new Percentage(percentage)).build();
+        try {
+            Integer percentage = demographyService.calculateEyeColorAndNationalityPercentage(nationality, eyeColor);
+            return Response.ok(new Percentage(percentage)).build();
+        } catch (NoPersonsException e) {
+            return Response.serverError().entity(new ErrorMessage("No persons in store")).build();
+        }
     }
 }
