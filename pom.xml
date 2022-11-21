@@ -15,7 +15,7 @@
   </properties>
 
   <name>lab2jaxrs Maven Webapp</name>
-  <url>https://se.ifmo.ru/~s265058/soa_lab2</url>
+  <url>https://se.ifmo.ru/~s265058/soa_lab2/api/v2/demography</url>
 
   <dependencies>
     <dependency>

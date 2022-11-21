@@ -1,10 +1,12 @@
 package dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 @Data
+@AllArgsConstructor
 public class Coordinates {
     @NotNull
     @Max(value = 273)

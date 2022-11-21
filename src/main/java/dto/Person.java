@@ -1,11 +1,13 @@
 package dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.ZonedDateTime;
 
 @Data
+@AllArgsConstructor
 public class Person {
     @NotNull
     @Positive
