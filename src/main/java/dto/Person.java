@@ -8,7 +8,7 @@ import java.time.ZonedDateTime;
 @Data
 public class Person {
     @NotNull
-    @Min(value = 1)
+    @Positive
     private Integer id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
 
     @NotNull
@@ -21,8 +21,10 @@ public class Person {
     @NotNull
     private ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
 
+    @Positive
     private Double height; //Поле может быть null, Значение поля должно быть больше 0
 
+    @NotNull
     @NotEmpty
     @Size(min = 10, max = 34)
     private String passportID; //Строка не может быть пустой, Длина строки должна быть не меньше 10, Длина строки не должна быть больше 34, Поле не может быть null
