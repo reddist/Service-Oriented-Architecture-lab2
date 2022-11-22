@@ -1,4 +1,4 @@
-package dto;
+package dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,9 +12,9 @@ import javax.xml.bind.annotation.XmlValue;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@XmlRootElement(name = "error")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ErrorMessage {
+public class Percentage {
     @XmlValue
-    private String error;
+    private Integer percentage;
 }

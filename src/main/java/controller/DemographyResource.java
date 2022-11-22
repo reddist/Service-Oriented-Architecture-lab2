@@ -2,8 +2,8 @@ package controller;
 
 import dto.Color;
 import dto.Country;
-import dto.ErrorMessage;
-import dto.Percentage;
+import dto.response.ErrorMessage;
+import dto.response.Percentage;
 import service.DemographyService;
 import service.NoPersonsException;
 
