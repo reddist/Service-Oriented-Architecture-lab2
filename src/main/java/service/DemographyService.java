@@ -1,66 +1,91 @@
 package service;
 
-import dto.*;
+import model.Color;
+import model.Country;
+import model.Person;
+import model.response.GetPersonsResponse;
 
 import javax.enterprise.context.ApplicationScoped;
-//import javax.ws.rs.client.Client;
-//import javax.ws.rs.client.ClientBuilder;
-//import javax.ws.rs.core.MediaType;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.util.List;
 
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-
-// http: 35867 - service1
-// https: 35868 - service1
-// management-http: 35998 - serivce1
-// management-https: 35999 - service1
+// https: 26506 - Spring service
+// https: 26505 - JAX-RS service
 
 @ApplicationScoped
 public class DemographyService {
-//    Client client = ClientBuilder.newClient();
-//    String api = "http://localhost:8080/persons";
+    Client client;
+    KeyStore keyStore;
+    String api = "https://localhost:26506/lab2springmvc/persons?count=10000";
 
-    public Person[] getPersonsFromMainService() throws NoPersonsException {
-//        throw new NoPersonsException();
-        return new Person[]{
-                new Person(1, "Alex", new Coordinates(1L, 2L), ZonedDateTime.now(), 180.0, "4021 856033", Color.BLUE, Country.VATICAN, new Location(1L, 2, 3)),
-                new Person(4, "Alex", new Coordinates(1L, 2L), ZonedDateTime.now(), 180.0, "4021 856033", Color.BLUE, Country.VATICAN, new Location(1L, 2, 3)),
-                new Person(2, "Fara", new Coordinates(2L, 3L), ZonedDateTime.now(), 177.0, "1122 293746", Color.BROWN, Country.JAPAN, new Location(10L, 105, 6)),
-                new Person(3, "Darina", new Coordinates(4L, 5L), ZonedDateTime.now(), 173.0, "2734 297477", Color.BLUE, Country.JAPAN, new Location(1L, 2, 2)),
+    public DemographyService() throws CertificateException, IOException, NoSuchAlgorithmException, KeyStoreException {
+        this.keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        this.keyStore.load(
+                new FileInputStream(System.getProperty("ssl_cert")),
+                System.getProperty("ssl_pass").toCharArray()
+        );
+        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+            public boolean verify(String s, SSLSession sslSession) {
+                return true;
+            }
         };
+        this.client = ClientBuilder
+                .newBuilder()
+                .trustStore(this.keyStore)
+                .hostnameVerifier(hostnameVerifier)
+                .build();
+    }
 
-//        Person[] persons = client
-//                .target(api)
-//                .request(MediaType.APPLICATION_XML)
-//                .get(Person[].class);
-//        if (persons.length == 0) {
-//            throw new NoPersonsException();
-//        }
-//        return persons;
+
+    public List<Person> getPersonsFromMainService() throws NoPersonsException {
+        GetPersonsResponse getPersonsResponse = client
+                .target(api)
+                .request(MediaType.APPLICATION_XML)
+                .get(GetPersonsResponse.class);
+        List<Person> persons = getPersonsResponse.getPersons();
+        if (persons.size() == 0) {
+            throw new NoPersonsException();
+        }
+        return persons;
     }
 
     public Integer calculateEyeColorPercentage(Color color) throws NoPersonsException {
-        Person[] persons = getPersonsFromMainService();
-        System.out.println("Received from main service: " + Arrays.toString(persons));
+        List<Person> persons = getPersonsFromMainService();
+        System.out.println("Received from main service: " + persons.toString());
 
-        long count = Arrays
-                .stream(persons)
-                .filter((person) -> person.getEyeColor().equals(color))
+        long count = persons
+                .stream()
+                .filter((person) -> color.equals(person.getEyeColor()))
                 .count();
 
-        return (int) Math.floor(count * 100.00 / persons.length);
+        return (int) Math.floor(count * 100.00 / persons.size());
     }
 
     public Integer calculateEyeColorAndNationalityPercentage(Country nationality, Color color) throws NoPersonsException {
-        Person[] persons = getPersonsFromMainService();
-        System.out.println("Received from main service: " + Arrays.toString(persons));
+        List<Person> persons = getPersonsFromMainService();
+        System.out.println("Received from main service: " + persons.toString());
 
-        long count = Arrays
-                .stream(persons)
-                .filter((person) -> person.getNationality().equals(nationality))
-                .filter((person) -> person.getEyeColor().equals(color))
+        long nationality_count = persons
+            .stream()
+            .filter((person) -> nationality.equals(person.getNationality()))
+            .count();
+
+        long count = persons
+                .stream()
+                .filter((person) -> nationality.equals(person.getNationality()))
+                .filter((person) -> color.equals(person.getEyeColor()))
                 .count();
 
-        return (int) Math.floor(count * 100.00 / persons.length);
+        return (int) Math.floor(count * 100.00 / nationality_count);
     }
 }
